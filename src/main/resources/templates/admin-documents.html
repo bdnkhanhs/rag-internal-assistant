@@ -41,7 +41,7 @@
         <form class="upload-form" th:action="@{/admin/documents}" method="post" enctype="multipart/form-data">
             <label class="visually-hidden" for="document-file">Choose a document</label>
             <input id="document-file" type="file" name="file" accept=".pdf,.txt,.md" required>
-            <button class="button" type="submit">Upload and index</button>
+            <button class="button button-small upload-submit-button" type="submit">Upload</button>
         </form>
     </section>
 

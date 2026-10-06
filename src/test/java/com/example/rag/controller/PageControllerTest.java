@@ -47,6 +47,6 @@ class PageControllerTest {
         mvc.perform(get("/admin/documents"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Knowledge documents")))
-                .andExpect(content().string(containsString("Upload and index")));
+                .andExpect(content().string(containsString(">Upload</button>")));
     }
 }

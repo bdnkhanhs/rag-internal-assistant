@@ -40,6 +40,7 @@ form { margin: 0; }
 .button { display: inline-flex; justify-content: center; align-items: center; gap: 8px; min-height: 42px; padding: 9px 16px; border: 1px solid transparent; border-radius: 10px; background: var(--primary); color: #fff; font-weight: 700; text-decoration: none; }
 .button:hover { background: var(--primary-dark); }
 .button-small { min-height: 34px; padding: 6px 10px; border-radius: 8px; font-size: 13px; }
+.upload-submit-button { font-size: 14px; font-weight: 600; }
 .button-secondary { border-color: var(--line); background: #fff; color: #334155; }
 .button-secondary:hover { background: #f7f8fa; }
 .button-quiet { background: transparent; color: #526078; }
@@ -189,6 +190,7 @@ td { color: #475467; font-size: 13px; }
     .admin-layout { width: calc(100% - 28px); margin: 25px auto 45px; }
     .upload-form { align-items: stretch; flex-direction: column; }
     .upload-form input[type="file"] { max-width: none; }
+    .upload-form .button { align-self: flex-start; }
     .section-heading { align-items: flex-start; flex-direction: column; }
     .search-form { width: 100%; }
     .search-form input { width: auto; flex: 1; min-width: 0; }
