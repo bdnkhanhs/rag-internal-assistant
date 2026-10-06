@@ -1,0 +1,17 @@
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\config\AppConfig.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\config\DataInitializer.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\config\GenAiClientConfiguration.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\config\SecurityConfig.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\controller\PageController.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\domain\AppUser.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\domain\ChatConversation.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\domain\ChatExchange.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\domain\KnowledgeDocument.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\RagApplication.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\repository\AppUserRepository.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\repository\ChatConversationRepository.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\repository\ChatExchangeRepository.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\repository\KnowledgeDocumentRepository.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\service\ChatService.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\service\DocumentService.java
+D:\WorkSpace\rag-internal-assistant\src\main\java\com\example\rag\service\RagService.java

@@ -1,0 +1,13 @@
+Internal RAG Demo Knowledge Base
+
+Access policy:
+Employees use the internal assistant with their company account. Standard users can ask questions against the approved knowledge base. Only administrators can upload or re-index documents.
+
+Deployment procedure:
+The application runs as a Spring Boot service on port 8080. The application requires GEMINI_API_KEY to use Gemini for embeddings and generation. Knowledge documents can be uploaded from the administrator document page. Supported formats for this demo are TXT, Markdown and PDF.
+
+RAG workflow:
+A document is parsed into text, split into overlapping chunks, embedded with Gemini, and stored in the application's vector store. A user question is embedded and matched against the stored chunks. The most relevant chunks are supplied to Gemini as context. The answer must stay within that context and cite the source numbers shown to the model.
+
+Refusal behavior:
+If no knowledge-base chunk is sufficiently similar to the question, the application refuses to answer from outside knowledge and asks the user to ask a question related to the available documents.

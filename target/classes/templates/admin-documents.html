@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manage documents</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/dashboard}">
+        <span class="brand-mark" aria-hidden="true">K</span>
+        <span class="brand-copy">
+            <span class="brand-name">Knowledge assistant</span>
+            <span class="brand-caption">Your team workspace</span>
+        </span>
+    </a>
+    <nav class="topbar-nav" aria-label="Primary navigation">
+        <a class="nav-link" th:href="@{/dashboard}">Assistant</a>
+        <a class="nav-link" th:href="@{/admin/documents}" aria-current="page">Manage documents</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-quiet sign-out-button" type="submit">Sign out</button></form>
+    </nav>
+</header>
+<main class="admin-layout">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">ADMINISTRATION</p>
+            <h1>Knowledge documents</h1>
+            <p class="muted">Upload and maintain the documents used to answer questions.</p>
+        </div>
+    </div>
+
+    <div class="alert alert-success" role="status" th:if="${success}" th:text="${success}"></div>
+    <div class="alert alert-error" role="alert" th:if="${error}" th:text="${error}"></div>
+
+    <section class="upload-card">
+        <div class="upload-copy">
+            <h2>Add a document</h2>
+            <p class="muted">PDF, TXT, or Markdown · Maximum 10 MB</p>
+        </div>
+        <form class="upload-form" th:action="@{/admin/documents}" method="post" enctype="multipart/form-data">
+            <label class="visually-hidden" for="document-file">Choose a document</label>
+            <input id="document-file" type="file" name="file" accept=".pdf,.txt,.md" required>
+            <button class="button" type="submit">Upload and index</button>
+        </form>
+    </section>
+
+    <section class="document-section" aria-labelledby="documents-heading">
+        <div class="section-heading">
+            <div>
+                <h2 id="documents-heading">Indexed documents</h2>
+                <p class="muted" th:text="${documents.size() + ' documents'}"></p>
+            </div>
+            <form class="search-form" th:action="@{/admin/documents}" method="get">
+                <label class="visually-hidden" for="document-search">Search documents</label>
+                <input id="document-search" type="search" name="q" th:value="${query}" placeholder="Search documents">
+                <button class="button button-secondary" type="submit">Search</button>
+                <a class="button button-quiet" th:if="${!#strings.isEmpty(query)}" th:href="@{/admin/documents}">Clear</a>
+            </form>
+        </div>
+        <p class="empty-state" th:if="${documents.isEmpty()}">
+            <span th:if="${#strings.isEmpty(query)}">No documents yet. Upload your first document to make it searchable.</span>
+            <span th:if="${!#strings.isEmpty(query)}">No documents match this search.</span>
+        </p>
+        <div class="table-wrap" th:if="${!documents.isEmpty()}">
+            <table>
+                <thead><tr><th>Document</th><th>Status</th><th>Size</th><th>Added</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+                <tbody>
+                <tr th:each="document : ${documents}">
+                    <td>
+                        <a class="document-title" th:href="@{/documents/{id}/source(id=${document.id})}" target="_blank" rel="noopener" th:text="${document.title}"></a>
+                        <span class="document-filename" th:text="${document.originalFilename}"></span>
+                    </td>
+                    <td><span class="status-pill status-success">Indexed</span></td>
+                    <td th:text="${fileSizes[document.id] + ' bytes'}"></td>
+                    <td th:text="${#temporals.format(document.createdAt, 'dd MMM yyyy HH:mm')}"></td>
+                    <td>
+                        <div class="row-actions">
+                            <form th:action="@{/admin/documents/{id}/reindex(id=${document.id})}" method="post">
+                                <button class="button button-secondary button-small" type="submit">Re-index</button>
+                            </form>
+                            <form th:action="@{/admin/documents/{id}/delete(id=${document.id})}" method="post"
+                                  onsubmit="return confirm('Delete this document and remove it from search?');">
+                                <button class="button button-danger button-small" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <nav class="pagination" th:if="${documentPage.totalPages > 1}" aria-label="Document pages">
+            <a class="button button-secondary button-small" th:if="${documentPage.hasPrevious()}"
+               th:href="@{/admin/documents(q=${query},page=${documentPage.number - 1})}">Previous</a>
+            <span class="muted" th:text="${'Page ' + (documentPage.number + 1) + ' of ' + documentPage.totalPages}"></span>
+            <a class="button button-secondary button-small" th:if="${documentPage.hasNext()}"
+               th:href="@{/admin/documents(q=${query},page=${documentPage.number + 1})}">Next</a>
+        </nav>
+    </section>
+</main>
+</body>
+</html>

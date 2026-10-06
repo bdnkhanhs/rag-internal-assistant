@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign in · Knowledge assistant</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="login-page">
+<main class="login-card">
+    <a class="brand login-brand" th:href="@{/login}"><span class="brand-mark" aria-hidden="true">K</span> Knowledge assistant</a>
+    <p class="eyebrow">INTERNAL KNOWLEDGE</p>
+    <h1>Welcome back</h1>
+    <p class="muted">Sign in to ask questions about your team's documents.</p>
+    <div class="alert alert-error" role="alert" th:if="${param.error}">The username or password was not recognized.</div>
+    <div class="alert alert-success" role="status" th:if="${param.logout}">You have been signed out.</div>
+    <form th:action="@{/login}" method="post">
+        <label for="username">Username</label>
+        <input id="username" name="username" autocomplete="username" required autofocus>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button class="button login-submit" type="submit">Sign in</button>
+    </form>
+</main>
+</body>
+</html>

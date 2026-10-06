@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Knowledge assistant</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/dashboard}">
+        <span class="brand-mark" aria-hidden="true">K</span>
+        <span class="brand-copy">
+            <span class="brand-name">Knowledge assistant</span>
+            <span class="brand-caption">Your team workspace</span>
+        </span>
+    </a>
+    <nav class="topbar-nav" aria-label="Primary navigation">
+        <a class="nav-link" th:href="@{/dashboard}" aria-current="page">Assistant</a>
+        <a class="nav-link" th:if="${isAdmin}" th:href="@{/admin/documents}">Manage documents</a>
+        <span class="badge user-badge" th:text="${username}" aria-label="Signed-in account"></span>
+        <form th:action="@{/logout}" method="post"><button class="button button-quiet sign-out-button" type="submit">Sign out</button></form>
+    </nav>
+</header>
+<main class="app-layout">
+    <aside class="sidebar" aria-label="Conversation history">
+        <div class="sidebar-heading">
+            <h2>Recent chats</h2>
+            <form th:action="@{/chat/new}" method="post">
+                <button class="button button-small" type="submit" aria-label="Start a new conversation">＋ New</button>
+            </form>
+        </div>
+        <p class="empty-note" th:if="${conversations.isEmpty()}">Your conversations will appear here.</p>
+        <div class="conversation-item" th:each="conversation : ${conversations}">
+            <a class="conversation-link"
+               th:href="@{/dashboard(conversationId=${conversation.id})}"
+               th:classappend="${conversation.id == conversationId} ? ' selected' : ''"
+               th:text="${conversation.title}"></a>
+            <form th:action="@{/chat/{id}/delete(id=${conversation.id})}" method="post">
+                <button class="conversation-delete" type="submit" title="Delete conversation"
+                        aria-label="Delete conversation" data-confirm-delete>×</button>
+            </form>
+        </div>
+        <section class="sidebar-documents">
+            <h2>Knowledge base</h2>
+            <p class="empty-note" th:if="${documents.isEmpty()}">No documents indexed yet.</p>
+            <ul class="compact-list">
+                <li th:each="document : ${documents}" th:text="${document.title}"></li>
+            </ul>
+        </section>
+    </aside>
+
+    <section class="chat-panel" aria-labelledby="page-title">
+        <div class="page-heading">
+            <div>
+                <p class="eyebrow">INTERNAL KNOWLEDGE</p>
+                <h1 id="page-title">Ask the knowledge base</h1>
+                <p class="muted">Answers use indexed documents and include their sources.</p>
+            </div>
+        </div>
+
+        <div class="welcome-card" th:if="${turns.isEmpty()}">
+            <div class="welcome-icon" aria-hidden="true">✦</div>
+            <h2>What would you like to know?</h2>
+            <p class="muted">Ask a question about your internal documents. If the answer is not in the knowledge base, the assistant will let you know.</p>
+            <div class="suggestion-list" aria-label="Suggested questions">
+                <button class="suggestion-chip" type="button" data-question="What topics are covered in the knowledge base?">What topics are covered in the knowledge base?</button>
+                <button class="suggestion-chip" type="button" data-question="Summarize the key points in the latest document">Summarize the key points in the latest document</button>
+            </div>
+        </div>
+
+        <section class="conversation" th:if="${!turns.isEmpty()}" aria-label="Conversation"
+                 th:attr="data-scroll-to-latest=${scrollToLatest}">
+            <article class="exchange" th:each="turn : ${turns}">
+                <div class="user-message">
+                    <span class="message-avatar" aria-hidden="true">You</span>
+                    <p th:text="${turn.exchange.question}"></p>
+                </div>
+                <div class="assistant-message">
+                    <span class="assistant-avatar" aria-hidden="true">✦</span>
+                    <div class="message-content">
+                        <div class="answer-heading">
+                            <h2>Answer</h2>
+                            <span class="status-pill status-success" th:if="${turn.exchange.status == 'ANSWERED'}">Answered</span>
+                            <span class="status-pill status-warning" th:if="${turn.exchange.status == 'NO_SOURCES'}">No relevant sources</span>
+                            <span class="status-pill status-error" th:if="${turn.exchange.status == 'SERVICE_ERROR'}">Service unavailable</span>
+                            <span class="status-pill status-warning" th:if="${turn.exchange.status != 'ANSWERED' and turn.exchange.status != 'NO_SOURCES' and turn.exchange.status != 'SERVICE_ERROR'}">Unable to answer</span>
+                        </div>
+                        <p class="answer-text" th:text="${turn.exchange.answer}"></p>
+
+                        <div class="source-list" th:if="${!turn.citations.isEmpty()}">
+                            <h3>Sources used</h3>
+                            <details class="source-card" th:each="citation : ${turn.citations}">
+                                <summary>
+                                    <span class="source-number" th:text="${'[' + citation.number + ']'}"></span>
+                                    <span class="source-title" th:text="${citation.source}"></span>
+                                    <span class="source-chunk" th:text="${'Chunk ' + citation.chunk}"></span>
+                                </summary>
+                                <blockquote th:text="${citation.excerpt}"></blockquote>
+                                <a class="source-open" th:if="${!#strings.isEmpty(citation.documentId)}"
+                                   th:href="@{/documents/{id}/source(id=${citation.documentId})}" target="_blank" rel="noopener">
+                                    Open original document
+                                </a>
+                            </details>
+                        </div>
+
+                        <form class="feedback" th:action="@{/chat/feedback}" method="post">
+                            <input type="hidden" name="exchangeId" th:value="${turn.exchange.id}">
+                            <span class="muted" th:text="${turn.exchange.feedback == null ? 'Was this answer helpful?' : 'Thanks for your feedback.'}"></span>
+                            <button class="feedback-button" type="submit" name="feedback" value="HELPFUL"
+                                    th:disabled="${turn.exchange.feedback == 'HELPFUL'}" aria-label="This answer was helpful">👍</button>
+                            <button class="feedback-button" type="submit" name="feedback" value="NOT_HELPFUL"
+                                    th:disabled="${turn.exchange.feedback == 'NOT_HELPFUL'}" aria-label="This answer was not helpful">👎</button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <form class="composer" th:action="@{/chat}" method="post"
+              onsubmit="const button=this.querySelector('button[type=submit]'); button.disabled=true; button.textContent='Thinking…'; this.querySelector('[role=status]').textContent='Searching sources and preparing an answer.';">
+            <input type="hidden" name="conversationId" th:if="${conversationId != null}" th:value="${conversationId}">
+            <label class="visually-hidden" for="question">Your question</label>
+            <textarea id="question" name="question" maxlength="1000" placeholder="Ask a question about your documents…" required></textarea>
+            <div class="composer-footer">
+                <span class="muted">Answers are grounded in your knowledge base.</span>
+                <button class="button" type="submit">Ask assistant <span aria-hidden="true">→</span></button>
+            </div>
+            <p class="visually-hidden" role="status" aria-live="polite"></p>
+        </form>
+    </section>
+</main>
+<script>
+    document.querySelectorAll(".suggestion-chip").forEach((chip) => {
+        chip.addEventListener("click", () => {
+            const question = document.getElementById("question");
+            question.value = chip.dataset.question;
+            question.focus();
+        });
+    });
+    document.querySelectorAll("[data-confirm-delete]").forEach((button) => {
+        button.addEventListener("click", (event) => {
+            if (!window.confirm("Delete this conversation?")) {
+                event.preventDefault();
+            }
+        });
+    });
+    const latestAnswer = document.querySelector(
+        '.conversation[data-scroll-to-latest="true"] .exchange:last-child .assistant-message'
+    );
+    if (latestAnswer) {
+        requestAnimationFrame(() => latestAnswer.scrollIntoView({ behavior: "smooth", block: "start" }));
+    }
+</script>
+</body>
+</html>

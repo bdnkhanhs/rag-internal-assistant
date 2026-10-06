@@ -1,0 +1,6 @@
+com\example\rag\service\ChatServiceTest.class
+com\example\rag\service\DocumentServiceLifecycleTest.class
+com\example\rag\config\GenAiClientConfigurationTest.class
+com\example\rag\controller\PageControllerTest.class
+com\example\rag\service\RagServiceTest.class
+com\example\rag\service\DocumentServiceTest.class
