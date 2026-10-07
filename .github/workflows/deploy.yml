@@ -63,6 +63,8 @@ jobs:
             "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" \
             "set -euo pipefail
              cd ~/rag-internal-assistant
+             mkdir -p data
+             chmod 777 data
              umask 077
              printf 'GEMINI_API_KEY=%s\n' '${GEMINI_API_KEY}' > .env
              chmod 600 .env
