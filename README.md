@@ -46,3 +46,33 @@ The vector store is persisted at `data/vectors.json`; H2 data is persisted under
 - Open a citation to inspect the retrieved excerpt or open its original uploaded file.
 - Admins can search indexed documents, open originals, refresh an index, or remove a document and its vectors.
 - The assistant distinguishes missing sources from temporary retrieval/model errors.
+
+## Deploy (AWS EC2 + GitHub Actions)
+
+### One-time EC2 setup
+1. Security group inbound rules: TCP 22 (SSH), TCP 8080 (app).
+2. Confirm Docker and Compose: `docker --version` and `docker compose version`.
+3. Ensure `ec2-user` can run Docker without root issues (member of `docker` group).
+
+### GitHub repository secrets
+Set these under **Settings → Secrets and variables → Actions**:
+
+| Secret | Description |
+|--------|-------------|
+| `DOCKERHUB_USERNAME` | Docker Hub username (`vthanhduc`) |
+| `DOCKERHUB_TOKEN` | Docker Hub access token (create a new one; do not reuse leaked tokens) |
+| `EC2_HOST` | `18.181.147.51` |
+| `EC2_USER` | `ec2-user` |
+| `EC2_SSH_KEY` | Full contents of the EC2 `.pem` private key |
+| `GEMINI_API_KEY` | Gemini API key for the running app |
+
+### Deploy
+- Push to `master`, or run **Actions → Deploy to EC2 → Run workflow**.
+- App URL: http://18.181.147.51:8080
+
+### On the server
+```bash
+cd ~/rag-internal-assistant
+docker compose ps
+docker compose logs -f --tail=100
+```

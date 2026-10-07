@@ -1,0 +1,13 @@
+services:
+  app:
+    image: ${IMAGE_NAME:-vthanhduc/rag-internal-assistant}:${IMAGE_TAG:-latest}
+    container_name: rag-internal-assistant
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

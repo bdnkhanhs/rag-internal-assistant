@@ -1,0 +1,11 @@
+# Secrets / local env
+.env
+.env.*
+*.pem
+
+# Local runtime / build
+target/
+data/
+.idea/
+*.iml
+.DS_Store
