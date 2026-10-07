@@ -1,0 +1,13 @@
+.git
+.github
+.vscode
+docs
+target
+data
+*.pem
+.env
+.env.*
+sample.txt
+**/.DS_Store
+**/Thumbs.db
+README.md
